@@ -29,7 +29,7 @@
 
   .slot-machine {
     display:flex; align-items:stretch; width:100%; max-width:920px;
-    min-height:320px;
+    min-height:250px;
     background:#04040d;
     border:2px solid rgba(255,215,0,0.25);
     border-radius:18px;
@@ -40,7 +40,7 @@
   .reel-col {
     flex:1; display:flex; flex-direction:column;
     border-right:1px solid rgba(255,255,255,0.05);
-    position:relative; min-height:280px;
+    position:relative; min-height:250px;
   }
   .reel-col:last-child { border-right:none; }
 
@@ -104,9 +104,10 @@
   .reel-col.just-locked .center-line { animation:flashHighlight 0.5s ease forwards; }
 
   .reel-footer {
-    padding:0.45rem 0 0.6rem;
+    padding:0.65rem 0.5rem 0.55rem;
     text-align:center;
-    font-size:0.95rem;
+    font-size:0.75rem;
+    letter-spacing:0.1em;
     border-top:1px solid rgba(255,255,255,0.04);
     opacity:0; transform:scale(0.8);
     transition:opacity 0.35s, transform 0.35s;
@@ -500,8 +501,13 @@ function buildAllStrips(){
       var d=document.createElement('div'); d.className='reel-item'; d.textContent=txt;
       strip.appendChild(d);
     });
+    // Start centered on a placeholder so no name shows before spin
     r.pos = -(174/2 - ITEM_H/2);
     applyPos(i);
+    // Blank out the center item so it shows "—" not a real name
+    var stripEl = document.getElementById('strip'+i);
+    var centerIdx = Math.round((r.pos + 174/2 - ITEM_H/2) / ITEM_H);
+    if(stripEl.children[centerIdx]) stripEl.children[centerIdx].textContent = '—';
     document.getElementById('col'+i).classList.remove('locked','just-locked');
     document.getElementById('foot'+i).style.opacity='0';
   });
