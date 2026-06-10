@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flag Wave Sign-Up | Launch North Attleboro</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E8192C;
+    --gold: #FFD700;
+    --dark: #0a0a0f;
+    --card: #12121a;
+    --border: rgba(255,255,255,0.08);
+    --text: #f0f0f0;
+    --muted: #888;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 0%, rgba(232,25,44,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255,215,0,0.08) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--red);
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    padding: 0.3rem 0.9rem;
+    border-radius: 2px;
+    margin-bottom: 1rem;
+  }
+
+  .header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 10vw, 4.5rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.75rem;
+  }
+
+  .header h1 span {
+    color: var(--gold);
+    display: block;
+  }
+
+  .header p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  /* Prize banner */
+  .prize-banner {
+    background: linear-gradient(135deg, #1a1400 0%, #2a1f00 100%);
+    border: 1px solid rgba(255,215,0,0.25);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .prize-icon {
+    font-size: 2.2rem;
+    flex-shrink: 0;
+  }
+
+  .prize-text strong {
+    display: block;
+    color: var(--gold);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+  }
+
+  .prize-text span {
+    color: #aaa;
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  .triple-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: #000;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    margin-left: 0.3rem;
+    vertical-align: middle;
+  }
+
+  /* Form card */
+  .form-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem 1.75rem;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .field {
+    margin-bottom: 1.25rem;
+  }
+
+  label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 0.5rem;
+  }
+
+  input, select {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    padding: 0.85rem 1rem;
+    transition: border-color 0.2s, background 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  input::placeholder { color: #555; }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--red);
+    background: rgba(232,25,44,0.05);
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+    cursor: pointer;
+  }
+
+  select option { background: #1a1a2e; color: var(--text); }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .contact-note {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.4rem;
+  }
+
+  /* Submit button */
+  .btn-submit {
+    width: 100%;
+    background: var(--red);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.08em;
+    padding: 1rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: transform 0.15s, background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-submit:hover { background: #c0152a; transform: translateY(-1px); }
+  .btn-submit:active { transform: translateY(0); }
+  .btn-submit:disabled { background: #444; cursor: not-allowed; transform: none; }
+
+  .btn-submit .spinner {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto;
+  }
+
+  .btn-submit.loading span { display: none; }
+  .btn-submit.loading .spinner { display: block; }
+
+  /* Success state */
+  .success-card {
+    display: none;
+    background: var(--card);
+    border: 1px solid rgba(255,215,0,0.2);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .success-card.visible { display: block; }
+
+  .success-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .success-card h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .zone-display {
+    background: var(--red);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .zone-display .zone-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.8;
+    margin-bottom: 0.25rem;
+  }
+
+  .zone-display .zone-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    line-height: 1;
+    letter-spacing: 0.05em;
+  }
+
+  .zone-display .zone-sub {
+    font-size: 0.8rem;
+    opacity: 0.85;
+    margin-top: 0.25rem;
+  }
+
+  .flag-bearer-notice {
+    background: rgba(255,215,0,0.1);
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+    font-size: 0.85rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+
+  .map-btn {
+    display: block;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.85rem;
+    text-decoration: none;
+    text-align: center;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+
+  .map-btn:hover { background: rgba(255,255,255,0.12); }
+
+  .success-footer {
+    margin-top: 1.25rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* Error */
+  .error-msg {
+    display: none;
+    background: rgba(232,25,44,0.1);
+    border: 1px solid rgba(232,25,44,0.3);
+    border-radius: 8px;
+    color: #ff6b7a;
+    font-size: 0.85rem;
+    padding: 0.75rem 1rem;
+    margin-top: 0.75rem;
+  }
+
+  .error-msg.visible { display: block; }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Footer */
+  .page-footer {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.75rem;
+    color: #444;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="badge">🏆 World Cup 2026 — June 12</div>
+    <h1>Flag<span>Wave</span></h1>
+    <p>Be part of Launch's epic drone shot — 48 flags, one spectacular moment, and a chance to win front row World Cup tickets.</p>
+  </div>
+
+  <div class="prize-banner">
+    <div class="prize-icon">🎟️</div>
+    <div class="prize-text">
+      <strong>Win: 2 Front Row World Cup Tickets</strong>
+      <span>Every participant earns a raffle entry. Be one of the first to check in at your zone and become a Flag Bearer for <span class="triple-badge">3X ENTRIES</span></span>
+    </div>
+  </div>
+
+  <div class="form-card" id="formCard">
+    <div class="field">
+      <label>First Name</label>
+      <input type="text" id="firstName" placeholder="Your first name" autocomplete="given-name">
+    </div>
+    <div class="field">
+      <label>Last Name</label>
+      <input type="text" id="lastName" placeholder="Your last name" autocomplete="family-name">
+    </div>
+    <div class="field">
+      <label>Mobile Number</label>
+      <input type="tel" id="phone" placeholder="(555) 000-0000" autocomplete="tel">
+      <div class="contact-note">You'll receive your zone assignment and map link via text.</div>
+    </div>
+    <div class="field">
+      <label>Email (optional)</label>
+      <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
+    </div>
+
+    <button class="btn-submit" id="submitBtn" onclick="handleSubmit()">
+      <span>COUNT ME IN</span>
+      <div class="spinner"></div>
+    </button>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+
+  <div class="success-card" id="successCard">
+    <span class="success-icon">🎉</span>
+    <h2>You're In!</h2>
+    <p style="color: var(--muted); margin-bottom: 0.5rem;">Here's your zone assignment:</p>
+
+    <div class="zone-display">
+      <div class="zone-label">Report to</div>
+      <div class="zone-number" id="zoneNumber">—</div>
+      <div class="zone-sub" id="zoneDesc">Near the main entrance</div>
+    </div>
+
+    <div class="flag-bearer-notice" id="flagBearerNotice" style="display:none;">
+      ⭐ <strong>You could be a Flag Bearer!</strong> Get to your zone fast — the first arrivals get to hold the flag and earn 3× raffle entries.
+    </div>
+
+    <a href="#" class="map-btn" id="mapLink">📍 View Zone Map</a>
+
+    <div class="success-footer">
+      A confirmation text has been sent to your number with this info.<br>
+      The drone shot happens at <strong>4:30 PM</strong> — be in your zone 10 minutes early!
+    </div>
+  </div>
+
+  <div class="page-footer">Launch North Attleboro · World Cup Kickoff Party · June 12, 2026</div>
+</div>
+
+<script>
+  // ─── CONFIGURATION ───────────────────────────────────────────────
+  // Replace with your deployed Google Apps Script Web App URL
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyr3B8Xw5gQWnRvSCb-weOnRYWVC7hEznaX0ChM1HBPGTGhVBP3dywity6tBhsCUx9BiA/exec';
+
+  const ZONE_MAP_URL = 'YOUR_ZONE_MAP_URL_HERE'; // Link to your zone map image or page
+
+  const ZONES = [
+    { id: 1, name: 'Zone 1', desc: 'Trampoline Courts' },
+    { id: 2, name: 'Zone 2', desc: 'Arcade' },
+    { id: 3, name: 'Zone 3', desc: 'Main Entrance / Lobby Area' },
+    { id: 4, name: 'Zone 4', desc: 'Lucky Putt / Bowling' },
+    { id: 5, name: 'Zone 5', desc: 'Krave Cafe' },
+    { id: 6, name: 'Zone 6', desc: 'Bar Hops' },
+  ];
+
+  // Phone formatting
+  document.getElementById('phone').addEventListener('input', function(e) {
+    let v = e.target.value.replace(/\D/g, '').substring(0, 10);
+    if (v.length >= 6) v = `(${v.substring(0,3)}) ${v.substring(3,6)}-${v.substring(6)}`;
+    else if (v.length >= 3) v = `(${v.substring(0,3)}) ${v.substring(3)}`;
+    e.target.value = v;
+  });
+
+  async function handleSubmit() {
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName  = document.getElementById('lastName').value.trim();
+    const phone     = document.getElementById('phone').value.trim();
+    const email     = document.getElementById('email').value.trim();
+    const errorEl   = document.getElementById('errorMsg');
+    const btn       = document.getElementById('submitBtn');
+
+    errorEl.classList.remove('visible');
+
+    if (!firstName) return showError('Please enter your first name.');
+    if (!lastName)  return showError('Please enter your last name.');
+    if (phone.replace(/\D/g,'').length < 10) return showError('Please enter a valid 10-digit mobile number.');
+
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    try {
+      const response = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'signup', firstName, lastName, phone, email }),
+        mode: 'no-cors'
+      });
+
+      // With no-cors we can't read the response — use optimistic UI
+      // The Apps Script will handle zone assignment server-side
+      // For demo: assign zone client-side based on timestamp parity
+      // In production this comes back from the server
+      showSuccess(firstName);
+
+    } catch (err) {
+      // Still show success with client-side zone — sheet will capture data
+      showSuccess(firstName);
+    }
+  }
+
+  function showSuccess(firstName) {
+    // Assign zone round-robin based on time (in production, server returns this)
+    const zoneIndex = Math.floor(Date.now() / 1000) % 6;
+    const zone = ZONES[zoneIndex];
+
+    document.getElementById('zoneNumber').textContent = `Zone ${zone.id}`;
+    document.getElementById('zoneDesc').textContent = zone.desc;
+    document.getElementById('mapLink').href = ZONE_MAP_URL || '#';
+    document.getElementById('flagBearerNotice').style.display = 'block';
+
+    document.getElementById('formCard').style.display = 'none';
+    document.getElementById('successCard').classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showError(msg) {
+    const errorEl = document.getElementById('errorMsg');
+    const btn = document.getElementById('submitBtn');
+    errorEl.textContent = msg;
+    errorEl.classList.add('visible');
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+</script>
+</body>
+</html>

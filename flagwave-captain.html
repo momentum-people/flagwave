@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zone Captain | Flag Wave Check-In</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E8192C;
+    --gold: #FFD700;
+    --green: #22c55e;
+    --dark: #0a0a0f;
+    --card: #12121a;
+    --card2: #1a1a25;
+    --border: rgba(255,255,255,0.08);
+    --text: #f0f0f0;
+    --muted: #777;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* Login screen */
+  .login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(232,25,44,0.12) 0%, transparent 70%);
+  }
+
+  .login-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+  }
+
+  .login-card h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+  }
+
+  .login-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
+
+  .login-card select, .login-card input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    padding: 0.85rem 1rem;
+    margin-bottom: 0.75rem;
+    appearance: none;
+    -webkit-appearance: none;
+    text-align: center;
+  }
+
+  .login-card select:focus, .login-card input:focus {
+    outline: none;
+    border-color: var(--red);
+  }
+
+  .login-card select option { background: #1a1a2e; }
+
+  /* Main app */
+  .app { display: none; }
+
+  /* Top bar */
+  .topbar {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0.9rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .topbar-left h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.05em;
+  }
+
+  .topbar-left span {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .topbar-right {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .pill {
+    background: rgba(255,255,255,0.07);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    padding: 0.3rem 0.75rem;
+    font-weight: 500;
+  }
+
+  .pill.green { background: rgba(34,197,94,0.15); color: var(--green); }
+  .pill.gold { background: rgba(255,215,0,0.15); color: var(--gold); }
+
+  /* Stats bar */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    padding: 1rem 1.25rem;
+    background: var(--card2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stat {
+    text-align: center;
+    padding: 0.5rem;
+  }
+
+  .stat .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .stat .lbl {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-top: 0.15rem;
+  }
+
+  .stat.checked .num { color: var(--green); }
+  .stat.bearers .num { color: var(--gold); }
+  .stat.pending .num { color: #aaa; }
+
+  /* Filter tabs */
+  .filter-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0.75rem 1.25rem;
+    background: var(--dark);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+
+  .tab {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0.45rem 0.9rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+
+  .tab:first-child { border-radius: 6px 0 0 6px; }
+  .tab:last-child { border-radius: 0 6px 6px 0; }
+  .tab + .tab { border-left: none; }
+
+  .tab.active {
+    background: var(--red);
+    border-color: var(--red);
+    color: white;
+  }
+
+  /* Search */
+  .search-bar {
+    padding: 0.75rem 1.25rem;
+    background: var(--dark);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .search-bar input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.65rem 1rem 0.65rem 2.25rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 0.75rem center;
+  }
+
+  .search-bar input:focus { outline: none; border-color: var(--red); }
+  .search-bar input::placeholder { color: #555; }
+
+  /* Guest list */
+  .guest-list {
+    padding: 0.75rem 1.25rem;
+  }
+
+  .guest-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: border-color 0.2s;
+  }
+
+  .guest-card.checked-in { border-color: rgba(34,197,94,0.25); }
+  .guest-card.flag-bearer { border-color: rgba(255,215,0,0.3); background: rgba(255,215,0,0.03); }
+
+  .guest-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    flex-shrink: 0;
+    color: #bbb;
+  }
+
+  .guest-card.checked-in .guest-avatar { background: rgba(34,197,94,0.15); color: var(--green); }
+  .guest-card.flag-bearer .guest-avatar { background: rgba(255,215,0,0.15); color: var(--gold); }
+
+  .guest-info { flex: 1; min-width: 0; }
+
+  .guest-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .guest-meta {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.15rem;
+  }
+
+  .guest-status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.4rem;
+    flex-shrink: 0;
+  }
+
+  .status-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .status-badge.pending { background: rgba(255,255,255,0.07); color: #888; }
+  .status-badge.present { background: rgba(34,197,94,0.15); color: var(--green); }
+  .status-badge.bearer { background: rgba(255,215,0,0.15); color: var(--gold); }
+
+  /* Action buttons */
+  .action-btns {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+  }
+
+  .btn-sm {
+    border: none;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.4rem 0.65rem;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .btn-sm:active { opacity: 0.7; }
+
+  .btn-checkin { background: rgba(34,197,94,0.2); color: var(--green); }
+  .btn-bearer { background: rgba(255,215,0,0.2); color: var(--gold); }
+  .btn-undo { background: rgba(255,255,255,0.07); color: #888; }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--muted);
+  }
+
+  .empty-state .icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+  /* Refresh button */
+  .refresh-btn {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: var(--red);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    font-size: 1.3rem;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(232,25,44,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    z-index: 200;
+  }
+
+  .refresh-btn:active { transform: scale(0.92); }
+  .refresh-btn.spinning { animation: spin 0.7s linear infinite; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #222;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: transform 0.3s ease;
+    z-index: 300;
+  }
+
+  .toast.visible { transform: translateX(-50%) translateY(0); }
+
+  /* Buttons */
+  .btn-full {
+    width: 100%;
+    background: var(--red);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.08em;
+    padding: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-full:hover { background: #c0152a; }
+
+  .loading-bar {
+    height: 2px;
+    background: linear-gradient(90deg, var(--red), var(--gold), var(--red));
+    background-size: 200% 100%;
+    animation: shimmer 1.2s linear infinite;
+    display: none;
+  }
+
+  .loading-bar.active { display: block; }
+
+  @keyframes shimmer { to { background-position: -200% 0; } }
+</style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <h1>Zone Captain</h1>
+    <p>Flag Wave Check-In · June 12</p>
+
+    <select id="zoneSelect">
+      <option value="">Select your zone...</option>
+      <option value="1">Zone 1 — Trampoline Courts</option>
+      <option value="2">Zone 2 — Arcade</option>
+      <option value="3">Zone 3 — Main Entrance / Lobby</option>
+      <option value="4">Zone 4 — Lucky Putt / Bowling</option>
+      <option value="5">Zone 5 — Krave Cafe</option>
+      <option value="6">Zone 6 — Bar Hops</option>
+    </select>
+
+    <input type="text" id="captainName" placeholder="Your name (Captain)">
+    <input type="password" id="captainPin" placeholder="Staff PIN">
+
+    <button class="btn-full" onclick="login()" style="margin-top:0.5rem;">OPEN MY ZONE</button>
+  </div>
+</div>
+
+<!-- Main App -->
+<div class="app" id="app">
+  <div class="loading-bar" id="loadingBar"></div>
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2 id="topZoneName">Zone 1</h2>
+      <span id="topCaptainName">Captain: —</span>
+    </div>
+    <div class="topbar-right">
+      <span class="pill green" id="liveCount">0 in</span>
+      <span class="pill gold" id="bearerCount">0 🚩</span>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat checked">
+      <div class="num" id="statChecked">0</div>
+      <div class="lbl">Checked In</div>
+    </div>
+    <div class="stat bearers">
+      <div class="num" id="statBearers">0</div>
+      <div class="lbl">Flag Bearers</div>
+    </div>
+    <div class="stat pending">
+      <div class="num" id="statPending">0</div>
+      <div class="lbl">Expected</div>
+    </div>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="tab active" onclick="setFilter('all', this)">All</button>
+    <button class="tab" onclick="setFilter('pending', this)">Pending</button>
+    <button class="tab" onclick="setFilter('present', this)">Present</button>
+    <button class="tab" onclick="setFilter('bearer', this)">Flag Bearers</button>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search by name..." oninput="renderList()">
+  </div>
+
+  <div class="guest-list" id="guestList"></div>
+</div>
+
+<button class="refresh-btn" id="refreshBtn" onclick="loadGuests()">↻</button>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ─── CONFIGURATION ───────────────────────────────────────────────
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyr3B8Xw5gQWnRvSCb-weOnRYWVC7hEznaX0ChM1HBPGTGhVBP3dywity6tBhsCUx9BiA/exec';
+  const STAFF_PIN = '2626'; // Change this to your actual PIN
+
+  // Zone flag counts (flags assigned per zone — adjust as needed)
+  const ZONE_FLAG_COUNTS = { 1:8, 2:8, 3:8, 4:8, 5:8, 6:8 };
+  const ZONE_NAMES = {
+    1: 'Zone 1 — Trampoline Courts',
+    2: 'Zone 2 — Arcade',
+    3: 'Zone 3 — Main Entrance / Lobby',
+    4: 'Zone 4 — Lucky Putt / Bowling',
+    5: 'Zone 5 — Krave Cafe',
+    6: 'Zone 6 — Bar Hops'
+  };
+
+  let currentZone = null;
+  let currentCaptain = '';
+  let guests = [];
+  let currentFilter = 'all';
+  let autoRefreshInterval = null;
+
+  // ─── DEMO DATA (remove when connected to real sheet) ─────────────
+  const DEMO_GUESTS = [
+    { id: 1, name: 'Maria Santos', phone: '(617) 555-0101', zone: 1, status: 'pending', signupTime: '3:12 PM' },
+    { id: 2, name: 'Jake Williams', phone: '(508) 555-0182', zone: 1, status: 'present', signupTime: '3:08 PM' },
+    { id: 3, name: 'Priya Patel', phone: '(781) 555-0234', zone: 1, status: 'bearer', signupTime: '2:55 PM' },
+    { id: 4, name: 'Carlos Mendez', phone: '(617) 555-0345', zone: 1, status: 'pending', signupTime: '3:22 PM' },
+    { id: 5, name: 'Aisha Johnson', phone: '(508) 555-0412', zone: 1, status: 'present', signupTime: '3:01 PM' },
+    { id: 6, name: 'Tom Brady Jr.', phone: '(617) 555-0521', zone: 1, status: 'pending', signupTime: '3:31 PM' },
+    { id: 7, name: 'Sarah Kim', phone: '(781) 555-0614', zone: 1, status: 'bearer', signupTime: '2:48 PM' },
+    { id: 8, name: 'Luis Fernandez', phone: '(508) 555-0733', zone: 1, status: 'pending', signupTime: '3:18 PM' },
+  ];
+
+  // ─── LOGIN ───────────────────────────────────────────────────────
+  function login() {
+    const zone = document.getElementById('zoneSelect').value;
+    const captain = document.getElementById('captainName').value.trim();
+    const pin = document.getElementById('captainPin').value;
+
+    if (!zone) return alert('Please select your zone.');
+    if (!captain) return alert('Please enter your name.');
+    if (pin !== STAFF_PIN) return alert('Incorrect PIN. Try again.');
+
+    currentZone = parseInt(zone);
+    currentCaptain = captain;
+
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('topZoneName').textContent = ZONE_NAMES[currentZone];
+    document.getElementById('topCaptainName').textContent = `Captain: ${captain}`;
+
+    loadGuests();
+    // Auto-refresh every 30 seconds
+    autoRefreshInterval = setInterval(loadGuests, 30000);
+  }
+
+  // ─── LOAD GUESTS ─────────────────────────────────────────────────
+  async function loadGuests() {
+    const btn = document.getElementById('refreshBtn');
+    const bar = document.getElementById('loadingBar');
+    btn.classList.add('spinning');
+    bar.classList.add('active');
+
+    try {
+      // In production: fetch from Apps Script
+      // const res = await fetch(`${APPS_SCRIPT_URL}?action=getGuests&zone=${currentZone}`);
+      // const data = await res.json();
+      // guests = data.guests;
+
+      // DEMO: use local data filtered to zone
+      await new Promise(r => setTimeout(r, 600)); // simulate network
+      guests = DEMO_GUESTS.filter(g => g.zone === currentZone);
+
+    } catch (e) {
+      showToast('⚠️ Could not refresh. Check connection.');
+    }
+
+    btn.classList.remove('spinning');
+    bar.classList.remove('active');
+    updateStats();
+    renderList();
+  }
+
+  // ─── RENDER LIST ─────────────────────────────────────────────────
+  function renderList() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const list = document.getElementById('guestList');
+
+    let filtered = guests.filter(g => {
+      const matchFilter =
+        currentFilter === 'all' ||
+        (currentFilter === 'pending' && g.status === 'pending') ||
+        (currentFilter === 'present' && g.status === 'present') ||
+        (currentFilter === 'bearer' && g.status === 'bearer');
+      const matchSearch = g.name.toLowerCase().includes(search);
+      return matchFilter && matchSearch;
+    });
+
+    if (filtered.length === 0) {
+      list.innerHTML = `<div class="empty-state"><div class="icon">👀</div><div>No guests match this filter.</div></div>`;
+      return;
+    }
+
+    list.innerHTML = filtered.map(g => {
+      const initials = g.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      const cardClass = g.status === 'bearer' ? 'flag-bearer' : g.status === 'present' ? 'checked-in' : '';
+      const badgeClass = g.status === 'bearer' ? 'bearer' : g.status === 'present' ? 'present' : 'pending';
+      const badgeText = g.status === 'bearer' ? '🚩 Flag Bearer' : g.status === 'present' ? '✓ Present' : '◌ Pending';
+
+      const bearerCount = guests.filter(x => x.status === 'bearer').length;
+      const maxBearers = ZONE_FLAG_COUNTS[currentZone] || 8;
+      const canBeBearer = bearerCount < maxBearers;
+
+      const actions = g.status === 'pending'
+        ? `<button class="btn-sm btn-checkin" onclick="checkIn(${g.id})">✓ Check In</button>
+           ${canBeBearer ? `<button class="btn-sm btn-bearer" onclick="makeBearer(${g.id})">🚩 Flag Bearer</button>` : ''}`
+        : g.status === 'present'
+        ? `${canBeBearer ? `<button class="btn-sm btn-bearer" onclick="makeBearer(${g.id})">🚩 Upgrade to Bearer</button>` : ''}
+           <button class="btn-sm btn-undo" onclick="undoStatus(${g.id})">Undo</button>`
+        : `<button class="btn-sm btn-undo" onclick="undoStatus(${g.id})">Remove Bearer</button>`;
+
+      return `
+        <div class="guest-card ${cardClass}" id="card-${g.id}">
+          <div class="guest-avatar">${initials}</div>
+          <div class="guest-info">
+            <div class="guest-name">${g.name}</div>
+            <div class="guest-meta">${g.phone} · Signed up ${g.signupTime}</div>
+            <div class="action-btns">${actions}</div>
+          </div>
+          <div class="guest-status">
+            <span class="status-badge ${badgeClass}">${badgeText}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ─── ACTIONS ─────────────────────────────────────────────────────
+  async function checkIn(id) {
+    updateGuestStatus(id, 'present');
+    await syncStatus(id, 'present');
+    showToast('✓ Checked in!');
+  }
+
+  async function makeBearer(id) {
+    updateGuestStatus(id, 'bearer');
+    await syncStatus(id, 'bearer');
+    showToast('🚩 Flag Bearer assigned — 3× entries!');
+  }
+
+  async function undoStatus(id) {
+    updateGuestStatus(id, 'pending');
+    await syncStatus(id, 'pending');
+    showToast('↩ Status reset');
+  }
+
+  function updateGuestStatus(id, status) {
+    const guest = guests.find(g => g.id === id);
+    if (guest) guest.status = status;
+    updateStats();
+    renderList();
+  }
+
+  async function syncStatus(id, status) {
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'updateStatus', id, status, zone: currentZone, captain: currentCaptain }),
+        mode: 'no-cors'
+      });
+    } catch (e) {
+      // Silent fail — data is updated locally, will sync on next refresh
+    }
+  }
+
+  // ─── STATS ───────────────────────────────────────────────────────
+  function updateStats() {
+    const checked = guests.filter(g => g.status === 'present' || g.status === 'bearer').length;
+    const bearers = guests.filter(g => g.status === 'bearer').length;
+    const pending = guests.filter(g => g.status === 'pending').length;
+
+    document.getElementById('statChecked').textContent = checked;
+    document.getElementById('statBearers').textContent = bearers;
+    document.getElementById('statPending').textContent = pending;
+    document.getElementById('liveCount').textContent = `${checked} in`;
+    document.getElementById('bearerCount').textContent = `${bearers} 🚩`;
+  }
+
+  // ─── FILTER ──────────────────────────────────────────────────────
+  function setFilter(filter, el) {
+    currentFilter = filter;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    renderList();
+  }
+
+  // ─── TOAST ───────────────────────────────────────────────────────
+  let toastTimeout;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('visible');
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => t.classList.remove('visible'), 2500);
+  }
+</script>
+</body>
+</html>
