@@ -474,12 +474,11 @@
     btn.disabled = true;
 
     try {
-      const response = await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'signup', firstName, lastName, phone, email })
+      const params = new URLSearchParams({
+        action: 'signup',
+        firstName, lastName, phone, email
       });
-
+      const response = await fetch(APPS_SCRIPT_URL + '?' + params.toString());
       const result = await response.json();
       if (result.success) {
         showSuccess(firstName, result.zone, result.zoneName, result.potentialBearer);
@@ -488,9 +487,8 @@
       } else {
         showError('Something went wrong. Please try again.');
       }
-
     } catch (err) {
-      showError('Could not connect. Please check your connection and try again.');
+      showError('Something went wrong. Please try again.');
     }
   }
 
