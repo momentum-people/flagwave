@@ -417,14 +417,15 @@
     </div>
 
     <div class="flag-bearer-notice" id="flagBearerNotice" style="display:none;">
-      ⭐ <strong>You could be a Flag Bearer!</strong> Get to your zone fast — the first arrivals get to hold the flag and earn 3× raffle entries.
+      ⭐ <strong>Get there early to become a Flag Bearer</strong> — the first 8 arrivals per zone hold a flag and earn 3× raffle entries. All checked-in participants earn 1× entry.
     </div>
 
     <a href="#" class="map-btn" id="mapLink">📍 View Zone Map</a>
 
     <div class="success-footer">
-      A confirmation text has been sent to your number with this info.<br>
-      The drone shot happens at <strong>6:)0 PM</strong> — be in your zone 10 minutes early!
+      A confirmation email has been sent with this info.<br>
+      Be at your zone by <strong>5:50 PM</strong> and check in with your Zone Captain.<br>
+      <strong>You must be present during the 6:00 PM drone shot to be entered in the raffle.</strong>
     </div>
   </div>
 
@@ -476,31 +477,28 @@
       const response = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'signup', firstName, lastName, phone, email }),
-        mode: 'no-cors'
+        body: JSON.stringify({ action: 'signup', firstName, lastName, phone, email })
       });
 
-      // With no-cors we can't read the response — use optimistic UI
-      // The Apps Script will handle zone assignment server-side
-      // For demo: assign zone client-side based on timestamp parity
-      // In production this comes back from the server
-      showSuccess(firstName);
+      const result = await response.json();
+      if (result.success) {
+        showSuccess(firstName, result.zone, result.zoneName, result.potentialBearer);
+      } else if (result.duplicate) {
+        showSuccess(firstName, result.zone, result.zoneName, false);
+      } else {
+        showError('Something went wrong. Please try again.');
+      }
 
     } catch (err) {
-      // Still show success with client-side zone — sheet will capture data
-      showSuccess(firstName);
+      showError('Could not connect. Please check your connection and try again.');
     }
   }
 
-  function showSuccess(firstName) {
-    // Assign zone round-robin based on time (in production, server returns this)
-    const zoneIndex = Math.floor(Date.now() / 1000) % 6;
-    const zone = ZONES[zoneIndex];
-
-    document.getElementById('zoneNumber').textContent = `Zone ${zone.id}`;
-    document.getElementById('zoneDesc').textContent = zone.desc;
+  function showSuccess(firstName, zoneNum, zoneName, potentialBearer) {
+    document.getElementById('zoneNumber').textContent = 'Zone ' + zoneNum;
+    document.getElementById('zoneDesc').textContent = zoneName || '';
     document.getElementById('mapLink').href = ZONE_MAP_URL || '#';
-    document.getElementById('flagBearerNotice').style.display = 'block';
+    document.getElementById('flagBearerNotice').style.display = potentialBearer ? 'block' : 'none';
 
     document.getElementById('formCard').style.display = 'none';
     document.getElementById('successCard').classList.add('visible');
