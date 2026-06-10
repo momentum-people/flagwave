@@ -29,6 +29,7 @@
 
   .slot-machine {
     display:flex; align-items:stretch; width:100%; max-width:920px;
+    min-height:320px;
     background:#04040d;
     border:2px solid rgba(255,215,0,0.25);
     border-radius:18px;
@@ -39,7 +40,7 @@
   .reel-col {
     flex:1; display:flex; flex-direction:column;
     border-right:1px solid rgba(255,255,255,0.05);
-    position:relative;
+    position:relative; min-height:280px;
   }
   .reel-col:last-child { border-right:none; }
 
@@ -53,7 +54,7 @@
   }
   .reel-col.locked .reel-header { color:var(--gold); }
 
-  .reel-window { flex:1; position:relative; overflow:hidden; height:174px; flex-shrink:0; }
+  .reel-window { position:relative; overflow:hidden; height:174px; min-height:174px; flex-shrink:0; }
 
   .reel-window::before,
   .reel-window::after {
