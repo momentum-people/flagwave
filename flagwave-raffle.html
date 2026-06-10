@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flag Wave Raffle | Launch North Attleboro</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root { --red:#E8192C; --gold:#FFD700; --dark:#060609; --border:rgba(255,255,255,0.08); --text:#f0f0f0; --muted:#555; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--dark); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.stars { position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+.star { position:absolute; width:2px; height:2px; background:white; border-radius:50%; animation:twinkle var(--d) ease-in-out infinite; }
+@keyframes twinkle { 0%,100%{opacity:0.06} 50%{opacity:0.55} }
+.blob { position:fixed; border-radius:50%; filter:blur(100px); opacity:0.10; pointer-events:none; }
+.blob1 { width:700px;height:700px;background:var(--red);top:-300px;left:-200px;animation:b1 10s ease-in-out infinite; }
+.blob2 { width:600px;height:600px;background:var(--gold);bottom:-280px;right:-180px;animation:b2 12s ease-in-out infinite; }
+@keyframes b1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(130px,90px)} }
+@keyframes b2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-90px,-70px)} }
+.main { position:relative; z-index:1; width:100%; max-width:1100px; padding:1.5rem; display:flex; flex-direction:column; align-items:center; gap:1.5rem; }
+.header { text-align:center; }
+.eyebrow { font-size:0.75rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--red); margin-bottom:0.35rem; }
+.header h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.2rem,5.5vw,5rem); letter-spacing:0.05em; line-height:0.88; }
+.header h1 span { color:var(--gold); }
+.prize-text { margin-top:0.5rem; font-size:clamp(0.8rem,1.6vw,1rem); color:#888; }
+.slot-machine { display:flex; align-items:stretch; width:100%; max-width:920px; background:#04040d; border:2px solid rgba(255,215,0,0.25); border-radius:18px; overflow:hidden; box-shadow:0 0 80px rgba(255,215,0,0.05),inset 0 1px 0 rgba(255,255,255,0.04); }
+.reel-col { flex:1; display:flex; flex-direction:column; border-right:1px solid rgba(255,255,255,0.05); position:relative; min-height:230px; }
+.reel-col:last-child { border-right:none; }
+.reel-header { padding:0.65rem 0.5rem 0.55rem; text-align:center; font-size:0.6rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); border-bottom:1px solid rgba(255,255,255,0.04); transition:color 0.4s; }
+.reel-col.locked .reel-header { color:var(--gold); }
+.reel-window { position:relative; overflow:hidden; height:174px; flex-shrink:0; }
+.reel-window::before,.reel-window::after { content:''; position:absolute; left:0; right:0; z-index:4; pointer-events:none; }
+.reel-window::before { top:0; height:52px; background:linear-gradient(to bottom,#04040d 30%,transparent); }
+.reel-window::after { bottom:0; height:52px; background:linear-gradient(to top,#04040d 30%,transparent); }
+.center-line { position:absolute; top:50%; left:0; right:0; height:58px; transform:translateY(-50%); border-top:1px solid rgba(255,215,0,0.12); border-bottom:1px solid rgba(255,215,0,0.12); background:rgba(255,215,0,0.025); z-index:3; pointer-events:none; transition:background 0.3s,border-color 0.3s; }
+.reel-col.locked .center-line { background:rgba(255,215,0,0.07); border-color:rgba(255,215,0,0.35); }
+@keyframes flashHL { 0%{background:rgba(255,215,0,0.32);border-color:rgba(255,215,0,0.7)} 100%{background:rgba(255,215,0,0.07);border-color:rgba(255,215,0,0.35)} }
+.reel-col.just-locked .center-line { animation:flashHL 0.5s ease forwards; }
+.reel-strip { position:absolute; top:0; left:0; width:100%; will-change:transform; }
+.reel-item { height:58px; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',Arial,sans-serif; font-size:clamp(0.95rem,2.2vw,1.55rem); letter-spacing:0.03em; text-align:center; padding:0 8px; line-height:1.1; color:rgba(255,255,255,0.18); user-select:none; }
+.reel-item.is-prev,.reel-item.is-next { color:rgba(255,255,255,0.38); }
+.reel-item.is-center { color:rgba(255,255,255,0.92); }
+.reel-col.locked .reel-item.is-center { color:var(--gold); }
+.reel-footer { padding:0.45rem 0 0.6rem; text-align:center; font-size:0.95rem; border-top:1px solid rgba(255,255,255,0.04); opacity:0; transform:scale(0.8); transition:opacity 0.35s,transform 0.35s; }
+.reel-col.locked .reel-footer { opacity:1; transform:scale(1); }
+.winner-banner { width:100%; max-width:920px; text-align:center; padding:1.4rem 1.5rem; background:rgba(255,215,0,0.05); border:1px solid rgba(255,215,0,0.18); border-radius:14px; opacity:0; transform:translateY(16px); transition:opacity 0.55s ease,transform 0.55s ease; pointer-events:none; }
+.winner-banner.show { opacity:1; transform:translateY(0); pointer-events:auto; }
+.winner-banner .wlabel { font-size:0.68rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); margin-bottom:0.35rem; }
+.winner-banner .wname { font-family:'Bebas Neue',sans-serif; font-size:clamp(1.8rem,4.5vw,3.8rem); letter-spacing:0.05em; color:var(--gold); animation:glow 0.9s ease-in-out infinite alternate; }
+@keyframes glow { from{text-shadow:0 0 18px rgba(255,215,0,0.35)} to{text-shadow:0 0 55px rgba(255,215,0,0.85),0 0 90px rgba(255,165,0,0.35)} }
+.winner-banner .wzone { font-size:0.88rem; color:#999; margin-top:0.25rem; }
+.bearer-tag { display:inline-block; background:rgba(255,215,0,0.12); border:1px solid rgba(255,215,0,0.28); border-radius:20px; font-size:0.7rem; color:var(--gold); padding:0.18rem 0.65rem; margin-top:0.45rem; }
+.status-msg { font-size:0.72rem; color:var(--muted); text-align:center; min-height:1.1em; letter-spacing:0.06em; }
+.controls { display:flex; gap:0.9rem; align-items:center; flex-wrap:wrap; justify-content:center; }
+.btn-spin { background:var(--red); color:white; border:none; border-radius:12px; font-family:'Bebas Neue',sans-serif; font-size:clamp(1.4rem,2.8vw,2rem); letter-spacing:0.1em; padding:0.65rem 3.2rem; cursor:pointer; box-shadow:0 6px 28px rgba(232,25,44,0.38); transition:transform 0.15s,background 0.2s,box-shadow 0.2s; }
+.btn-spin:hover:not(:disabled) { background:#c9172a; transform:translateY(-2px); box-shadow:0 10px 36px rgba(232,25,44,0.5); }
+.btn-spin:disabled { background:#2a2a2a; box-shadow:none; cursor:not-allowed; color:#666; }
+.btn-secondary { background:rgba(255,255,255,0.05); color:#888; border:1px solid rgba(255,255,255,0.09); border-radius:12px; font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:600; padding:0.65rem 1.4rem; cursor:pointer; transition:background 0.2s; }
+.btn-secondary:hover { background:rgba(255,255,255,0.09); }
+.panel { width:100%; max-width:920px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+.panel-hdr { padding:0.8rem 1.4rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; }
+.panel-hdr h3 { font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#666; }
+.entry-counts { display:flex; gap:1rem; font-size:0.7rem; color:#666; }
+.entry-counts strong { color:var(--gold); }
+.panel-body { padding:0.9rem 1.4rem; display:flex; gap:0.7rem; }
+.panel-body textarea { flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.78rem; padding:0.6rem 0.85rem; resize:none; height:68px; line-height:1.5; }
+.panel-body textarea::placeholder { color:#3a3a3a; }
+.panel-body textarea:focus { outline:none; border-color:rgba(232,25,44,0.4); }
+.btn-load { background:rgba(232,25,44,0.18); color:var(--red); border:1px solid rgba(232,25,44,0.28); border-radius:8px; font-family:'DM Sans',sans-serif; font-size:0.76rem; font-weight:700; padding:0 0.95rem; cursor:pointer; white-space:nowrap; transition:background 0.2s; align-self:stretch; }
+.btn-load:hover { background:rgba(232,25,44,0.28); }
+.cp { position:fixed; top:-12px; border-radius:2px; z-index:9999; pointer-events:none; }
+@keyframes cfFall { 0%{transform:translateX(0) rotate(0deg);opacity:1} 100%{transform:translateX(var(--x)) rotate(800deg);opacity:0;top:105vh} }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+
+<div class="main">
+  <div class="header">
+    <div class="eyebrow">&#127942; Launch North Attleboro &middot; World Cup 2026</div>
+    <h1>Flag Wave<br><span>Raffle</span></h1>
+    <div class="prize-text">Grand Prize: 2 Front Row Tickets to a World Cup Match</div>
+  </div>
+
+  <div class="slot-machine">
+    <div class="reel-col" id="col0">
+      <div class="reel-header">Zone</div>
+      <div class="reel-window"><div class="center-line"></div><div class="reel-strip" id="strip0"></div></div>
+      <div class="reel-footer" id="foot0">&#128274;</div>
+    </div>
+    <div class="reel-col" id="col1">
+      <div class="reel-header">First Name</div>
+      <div class="reel-window"><div class="center-line"></div><div class="reel-strip" id="strip1"></div></div>
+      <div class="reel-footer" id="foot1">&#128274;</div>
+    </div>
+    <div class="reel-col" id="col2">
+      <div class="reel-header">Last Name</div>
+      <div class="reel-window"><div class="center-line"></div><div class="reel-strip" id="strip2"></div></div>
+      <div class="reel-footer" id="foot2">&#128274;</div>
+    </div>
+  </div>
+
+  <div class="winner-banner" id="winBanner">
+    <div class="wlabel">&#127942; Winner!</div>
+    <div class="wname" id="wName">&mdash;</div>
+    <div class="wzone" id="wZone">&mdash;</div>
+    <div id="wBearer"></div>
+  </div>
+
+  <div class="status-msg" id="statusMsg">Load participants and hit SPIN</div>
+
+  <div class="controls">
+    <button class="btn-spin" id="spinBtn" onclick="startSpin()" disabled>SPIN</button>
+    <button class="btn-secondary" onclick="resetAll()">Reset</button>
+  </div>
+
+  <div class="panel">
+    <div class="panel-hdr">
+      <h3>Participants</h3>
+      <div class="entry-counts">
+        <span>Regular: <strong id="cntR">0</strong></span>
+        <span>Flag Bearers (3x): <strong id="cntB">0</strong></span>
+        <span>Total entries: <strong id="cntT">0</strong></span>
+      </div>
+    </div>
+    <div class="panel-body">
+      <textarea id="importTxt" placeholder="One name per line. Mark flag bearers with * and include zone:&#10;Maria Santos* (Zone 1 - Trampoline Courts)&#10;Jake Williams (Zone 3 - Main Entrance)&#10;Priya Patel* (Zone 2 - Arcade)"></textarea>
+      <button class="btn-load" onclick="loadNames()">LOAD<br>NAMES</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Stars
+(function(){
+  var el=document.getElementById('stars');
+  for(var i=0;i<100;i++){
+    var s=document.createElement('div');s.className='star';
+    s.style.cssText='left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;--d:'+(2+Math.random()*5)+'s;';
+    el.appendChild(s);
+  }
+})();
+
+// Audio
+var AC;
+function getAC(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC;}
+function mkNoise(ac,dur){var f=Math.ceil(ac.sampleRate*dur),b=ac.createBuffer(1,f,ac.sampleRate),d=b.getChannelData(0);for(var i=0;i<f;i++)d[i]=Math.random()*2-1;var s=ac.createBufferSource();s.buffer=b;return s;}
+function cruiseHiss(dur){if(dur<0.1)return;var ac=getAC(),n=mkNoise(ac,dur+0.5),hpf=ac.createBiquadFilter(),g=ac.createGain();hpf.type='highpass';hpf.frequency.value=3000;n.connect(hpf);hpf.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(0,ac.currentTime);g.gain.linearRampToValueAtTime(0.18,ac.currentTime+0.4);g.gain.setValueAtTime(0.18,ac.currentTime+dur-0.3);g.gain.linearRampToValueAtTime(0,ac.currentTime+dur);n.start();n.stop(ac.currentTime+dur+0.1);}
+function decelWhoosh(dur){var ac=getAC(),n=mkNoise(ac,dur+0.3),hpf=ac.createBiquadFilter(),g=ac.createGain();hpf.type='highpass';hpf.frequency.setValueAtTime(2800,ac.currentTime);hpf.frequency.linearRampToValueAtTime(100,ac.currentTime+dur);n.connect(hpf);hpf.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(0.22,ac.currentTime);g.gain.setValueAtTime(0.28,ac.currentTime+dur*0.25);g.gain.linearRampToValueAtTime(0,ac.currentTime+dur);n.start();n.stop(ac.currentTime+dur+0.1);}
+function kachunk(){var ac=getAC(),t=ac.createOscillator(),tg=ac.createGain();t.type='sine';t.frequency.value=55;t.connect(tg);tg.connect(ac.destination);tg.gain.setValueAtTime(0.7,ac.currentTime);tg.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.3);t.start();t.stop(ac.currentTime+0.35);var p=ac.createOscillator(),pg=ac.createGain();p.type='sine';p.frequency.value=1400;p.connect(pg);pg.connect(ac.destination);pg.gain.setValueAtTime(0.35,ac.currentTime+0.015);pg.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.45);p.start(ac.currentTime+0.015);p.stop(ac.currentTime+0.5);var n=mkNoise(ac,0.12),ng=ac.createGain(),lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.value=500;n.connect(lp);lp.connect(ng);ng.connect(ac.destination);ng.gain.setValueAtTime(0.3,ac.currentTime);ng.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.1);n.start();n.stop(ac.currentTime+0.13);}
+function sirenFanfare(){var ac=getAC(),crowd=mkNoise(ac,2.5),cg=ac.createGain();crowd.connect(cg);cg.connect(ac.destination);cg.gain.setValueAtTime(0,ac.currentTime);cg.gain.linearRampToValueAtTime(0.35,ac.currentTime+0.4);cg.gain.setValueAtTime(0.3,ac.currentTime+1.8);cg.gain.linearRampToValueAtTime(0,ac.currentTime+2.5);crowd.start();crowd.stop(ac.currentTime+2.6);[0,0.1].forEach(function(off,idx){var s=ac.createOscillator(),slp=ac.createBiquadFilter(),sg=ac.createGain();s.type='sawtooth';slp.type='lowpass';slp.frequency.value=1400;s.connect(slp);slp.connect(sg);sg.connect(ac.destination);s.frequency.setValueAtTime(180+idx*40,ac.currentTime+off);s.frequency.linearRampToValueAtTime(1100+idx*300,ac.currentTime+off+1.4);sg.gain.setValueAtTime(0,ac.currentTime+off);sg.gain.linearRampToValueAtTime(0.25,ac.currentTime+off+0.15);sg.gain.setValueAtTime(0.22,ac.currentTime+off+1.2);sg.gain.linearRampToValueAtTime(0,ac.currentTime+off+2.0);s.start(ac.currentTime+off);s.stop(ac.currentTime+off+2.1);});}
+
+// Constants
+var IH=58,WH=174,PEAK=1.5,ACC=800,DEC=2500;
+var LT=[8000,13000,16500];
+var ZDESC={'Zone 1':'Trampoline Courts','Zone 2':'Arcade','Zone 3':'Main Entrance / Lobby','Zone 4':'Lucky Putt / Bowling','Zone 5':'Krave Cafe','Zone 6':'Bar Hops'};
+
+// State
+var participants=[],pool=[],winner=null,spinning=false;
+var pos=[0,0,0],strips=[[],[],[]];
+
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function unique(a){return a.filter(function(v,i,ar){return ar.indexOf(v)===i;});}
+function makeLong(base,n){var out=[];while(out.length<n)out=out.concat(shuffle(base.slice()));return out;}
+
+function setPos(i,p){
+  pos[i]=p;
+  document.getElementById('strip'+i).style.transform='translateY('+(-p)+'px)';
+  var ci=Math.round((p+WH/2-IH/2)/IH);
+  var els=document.getElementById('strip'+i).children;
+  for(var j=0;j<els.length;j++){
+    var d=j-ci;
+    els[j].className='reel-item'+(d===0?' is-center':d===1?' is-next':d===-1?' is-prev':'');
+  }
+}
+
+function fillStrip(i,items){
+  strips[i]=items;
+  var el=document.getElementById('strip'+i);
+  el.innerHTML='';
+  items.forEach(function(t){var d=document.createElement('div');d.className='reel-item';d.textContent=t;el.appendChild(d);});
+}
+
+function velAt(elapsed,dur){
+  var rem=dur-elapsed;
+  if(elapsed<ACC)return PEAK*Math.pow(elapsed/ACC,2);
+  if(rem>DEC)return PEAK;
+  return PEAK*Math.pow(rem/DEC,3);
+}
+
+function loadNames(){
+  var raw=document.getElementById('importTxt').value.trim();
+  if(!raw)return;
+  participants=[];
+  raw.split('\n').map(function(l){return l.trim();}).filter(Boolean).forEach(function(line){
+    var bearer=line.indexOf('*')!==-1;
+    var zm=line.match(/\(([^)]+)\)/);
+    var zone=zm?zm[1].trim():'Zone 1';
+    var name=line.replace('*','').replace(/\([^)]+\)/,'').trim();
+    var parts=name.split(/\s+/);
+    participants.push({first:parts[0]||'',last:parts.slice(1).join(' ')||'',zone:zone,bearer:bearer});
+  });
+  pool=[];
+  participants.forEach(function(p){var n=p.bearer?3:1;for(var i=0;i<n;i++)pool.push(p);});
+  shuffle(pool);
+  var r=participants.filter(function(p){return !p.bearer;}).length;
+  var b=participants.filter(function(p){return p.bearer;}).length;
+  document.getElementById('cntR').textContent=r;
+  document.getElementById('cntB').textContent=b;
+  document.getElementById('cntT').textContent=r+b*3;
+  document.getElementById('spinBtn').disabled=pool.length===0;
+  document.getElementById('statusMsg').textContent=pool.length+' entries ready — hit SPIN!';
+  buildIdle();
+}
+
+function buildIdle(){
+  var zones=unique(pool.map(function(p){return p.zone;}));
+  var firsts=unique(pool.map(function(p){return p.first;}));
+  var lasts=unique(pool.map(function(p){return p.last;}));
+  [makeLong(zones,20),makeLong(firsts,20),makeLong(lasts,20)].forEach(function(items,i){
+    fillStrip(i,items);
+    setPos(i,3*IH-WH/2+IH/2);
+    document.getElementById('col'+i).classList.remove('locked','just-locked');
+    document.getElementById('foot'+i).style.opacity='0';
+    document.getElementById('foot'+i).style.transform='scale(0.8)';
+  });
+}
+
+function startSpin(){
+  if(spinning||!pool.length)return;
+  getAC();
+  spinning=true;
+  document.getElementById('spinBtn').disabled=true;
+  document.getElementById('winBanner').classList.remove('show');
+  document.getElementById('statusMsg').textContent='';
+  winner=pool[Math.floor(Math.random()*pool.length)];
+
+  var targets=[winner.zone,winner.first,winner.last];
+  var zones=unique(pool.map(function(p){return p.zone;}));
+  var firsts=unique(pool.map(function(p){return p.first;}));
+  var lasts=unique(pool.map(function(p){return p.last;}));
+  var maxTravel=PEAK*(ACC/3)+PEAK*(LT[2]-ACC-DEC)+PEAK*(DEC/4);
+  var need=Math.ceil(maxTravel/IH)+30;
+
+  [makeLong(zones,need),makeLong(firsts,need),makeLong(lasts,need)].forEach(function(items,i){
+    var totalDist=PEAK*(ACC/3)+PEAK*(LT[i]-ACC-DEC)+PEAK*(DEC/4);
+    var landingIdx=Math.ceil(totalDist/IH)+5;
+    while(items.length<=landingIdx+5)items=items.concat(shuffle(items.slice(0,20)));
+    var cur=items.indexOf(targets[i]);
+    if(cur>=0){var tmp=items[landingIdx];items[landingIdx]=items[cur];items[cur]=tmp;}
+    else{items[landingIdx]=targets[i];}
+    fillStrip(i,items);
+    var targetPos=landingIdx*IH-WH/2+IH/2;
+    setPos(i,targetPos-totalDist);
+    document.getElementById('col'+i).classList.remove('locked','just-locked');
+    document.getElementById('foot'+i).style.opacity='0';
+    document.getElementById('foot'+i).style.transform='scale(0.8)';
+  });
+
+  LT.forEach(function(dur){cruiseHiss((dur-DEC)/1000);});
+
+  var locked=[false,false,false],wf=[false,false,false];
+  var t0=performance.now(),lt=t0;
+
+  function frame(ts){
+    var dt=Math.min(ts-lt,50);lt=ts;
+    var el=ts-t0;
+    for(var i=0;i<3;i++){
+      if(locked[i])continue;
+      var dur=LT[i],t=Math.min(el,dur),rem=dur-t;
+      if(!wf[i]&&rem<=DEC){wf[i]=true;decelWhoosh(rem/1000);}
+      pos[i]+=velAt(t,dur)*dt;
+      setPos(i,pos[i]);
+      if(el>=dur&&!locked[i]){
+        locked[i]=true;
+        var ci=Math.round((pos[i]+WH/2-IH/2)/IH);
+        ci=Math.max(0,Math.min(ci,strips[i].length-1));
+        setPos(i,ci*IH-WH/2+IH/2);
+        var col=document.getElementById('col'+i);
+        col.classList.add('locked','just-locked');
+        setTimeout((function(ii){return function(){document.getElementById('col'+ii).classList.remove('just-locked');};})(i),500);
+        kachunk();
+        document.getElementById('foot'+i).style.opacity='1';
+        document.getElementById('foot'+i).style.transform='scale(1)';
+        if(i===2)setTimeout(showWinner,700);
+      }
+    }
+    if(!locked[2])requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function showWinner(){
+  spinning=false;
+  document.getElementById('wName').textContent=winner.first+' '+winner.last;
+  var zd=ZDESC[winner.zone]||'';
+  document.getElementById('wZone').textContent=winner.zone+(zd?' \u00b7 '+zd:'');
+  document.getElementById('wBearer').innerHTML=winner.bearer?'<span class="bearer-tag">\u2b50 Flag Bearer \u00b7 3x entries</span>':'';
+  document.getElementById('winBanner').classList.add('show');
+  sirenFanfare();
+  launchConfetti();
+  document.getElementById('spinBtn').disabled=false;
+}
+
+function resetAll(){
+  if(spinning)return;
+  document.getElementById('winBanner').classList.remove('show');
+  document.getElementById('spinBtn').disabled=pool.length===0;
+  document.getElementById('statusMsg').textContent=pool.length>0?pool.length+' entries ready \u2014 hit SPIN!':'Load participants and hit SPIN';
+  if(participants.length)buildIdle();
+}
+
+function launchConfetti(){
+  var cols=['#E8192C','#FFD700','#fff','#22c55e','#3b82f6','#f97316','#a855f7'];
+  for(var i=0;i<160;i++){
+    var c=document.createElement('div');c.className='cp';
+    var dur=(2.2+Math.random()*2.4).toFixed(2);
+    var delay=(i*0.015).toFixed(3);
+    var x=((Math.random()-0.5)*420).toFixed(0);
+    c.style.cssText='left:'+Math.random()*100+'%;background:'+cols[Math.floor(Math.random()*cols.length)]
+      +';width:'+(5+Math.random()*9).toFixed(0)+'px;height:'+(5+Math.random()*9).toFixed(0)+'px;'
+      +'border-radius:'+(Math.random()>0.5?'50%':'2px')
+      +';animation:cfFall '+dur+'s ease-in '+delay+'s both;--x:'+x+'px;';
+    document.body.appendChild(c);
+    setTimeout(function(){if(c.parentNode)c.parentNode.removeChild(c);},5000);
+  }
+}
+
+// Demo load
+window.addEventListener('load',function(){
+  var demo=[
+    'Maria Santos* (Zone 1 - Trampoline Courts)',
+    'Jake Williams (Zone 3 - Main Entrance)',
+    'Priya Patel* (Zone 2 - Arcade)',
+    'Carlos Mendez (Zone 1 - Trampoline Courts)',
+    'Aisha Johnson (Zone 4 - Lucky Putt/Bowling)',
+    'Tom Reyes (Zone 5 - Krave Cafe)',
+    'Sarah Kim* (Zone 6 - Bar Hops)',
+    'Luis Fernandez (Zone 2 - Arcade)',
+    'Nina Okafor (Zone 3 - Main Entrance)',
+    'Dev Sharma (Zone 4 - Lucky Putt/Bowling)',
+    'Rosa Alves* (Zone 1 - Trampoline Courts)',
+    'Ben Murphy (Zone 6 - Bar Hops)',
+    'Leila Hassan (Zone 3 - Main Entrance)',
+    'Marcus Webb* (Zone 5 - Krave Cafe)',
+    'Chloe Dupont (Zone 2 - Arcade)'
+  ];
+  document.getElementById('importTxt').value=demo.join('\n');
+  loadNames();
+});
+</script>
+</body>
+</html>
