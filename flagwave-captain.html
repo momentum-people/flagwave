@@ -492,18 +492,6 @@
   let currentFilter = 'all';
   let autoRefreshInterval = null;
 
-  // ─── DEMO DATA (remove when connected to real sheet) ─────────────
-  const DEMO_GUESTS = [
-    { id: 1, name: 'Maria Santos', phone: '(617) 555-0101', zone: 1, status: 'pending', signupTime: '3:12 PM' },
-    { id: 2, name: 'Jake Williams', phone: '(508) 555-0182', zone: 1, status: 'present', signupTime: '3:08 PM' },
-    { id: 3, name: 'Priya Patel', phone: '(781) 555-0234', zone: 1, status: 'bearer', signupTime: '2:55 PM' },
-    { id: 4, name: 'Carlos Mendez', phone: '(617) 555-0345', zone: 1, status: 'pending', signupTime: '3:22 PM' },
-    { id: 5, name: 'Aisha Johnson', phone: '(508) 555-0412', zone: 1, status: 'present', signupTime: '3:01 PM' },
-    { id: 6, name: 'Tom Brady Jr.', phone: '(617) 555-0521', zone: 1, status: 'pending', signupTime: '3:31 PM' },
-    { id: 7, name: 'Sarah Kim', phone: '(781) 555-0614', zone: 1, status: 'bearer', signupTime: '2:48 PM' },
-    { id: 8, name: 'Luis Fernandez', phone: '(508) 555-0733', zone: 1, status: 'pending', signupTime: '3:18 PM' },
-  ];
-
   // ─── LOGIN ───────────────────────────────────────────────────────
   function login() {
     const zone = document.getElementById('zoneSelect').value;
@@ -535,17 +523,22 @@
     bar.classList.add('active');
 
     try {
-      // In production: fetch from Apps Script
-      // const res = await fetch(`${APPS_SCRIPT_URL}?action=getGuests&zone=${currentZone}`);
-      // const data = await res.json();
-      // guests = data.guests;
-
-      // DEMO: use local data filtered to zone
-      await new Promise(r => setTimeout(r, 600)); // simulate network
-      guests = DEMO_GUESTS.filter(g => g.zone === currentZone);
-
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getGuests&zone=${currentZone}`);
+      const data = await res.json();
+      if (data.success) {
+        guests = data.guests.map(g => ({
+          id:         g.id,
+          name:       g.name || (g.firstName + ' ' + g.lastName),
+          phone:      g.phone || '',
+          zone:       g.zone,
+          status:     g.status || 'pending',
+          signupTime: g.signupTime || ''
+        }));
+      } else {
+        showToast('Could not load guests: ' + (data.error || 'Unknown error'));
+      }
     } catch (e) {
-      showToast('⚠️ Could not refresh. Check connection.');
+      showToast('Could not connect. Check internet connection.');
     }
 
     btn.classList.remove('spinning');
@@ -636,12 +629,8 @@
 
   async function syncStatus(id, status) {
     try {
-      await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'updateStatus', id, status, zone: currentZone, captain: currentCaptain }),
-        mode: 'no-cors'
-      });
+      const params = new URLSearchParams({ action: 'updateStatus', id, status, zone: currentZone, captain: currentCaptain });
+      await fetch(APPS_SCRIPT_URL + '?' + params.toString());
     } catch (e) {
       // Silent fail — data is updated locally, will sync on next refresh
     }
