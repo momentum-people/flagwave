@@ -16,7 +16,7 @@
     background:var(--dark); color:#f0f0f0;
     font-family:'DM Sans',sans-serif;
     display:flex; flex-direction:column; align-items:center;
-    justify-content:center; padding:1.5rem;
+    justify-content:flex-start; padding:1rem 1.5rem;
   }
 
   /* Background */
@@ -30,45 +30,62 @@
   /* Layout */
   .wrap {
     position:relative; z-index:1;
-    width:100%; max-width:580px;
+    width:100%; max-width:900px;
     display:flex; flex-direction:column; align-items:center;
-    gap:1.6rem;
+    gap:0.9rem;
   }
 
   /* Logo */
-  .logo { width:160px; display:block; }
+  .logo { width:120px; display:block; }
 
   /* Hero text */
-  .hero { text-align:center; }
+  .hero { text-align:center; margin:0; }
   .eyebrow {
     font-size:0.7rem; letter-spacing:0.22em; text-transform:uppercase;
-    color:var(--red); margin-bottom:0.5rem;
+    color:var(--red); margin-bottom:0.2rem;
   }
   .hero h1 {
     font-family:'Bebas Neue',sans-serif;
-    font-size:clamp(3rem,10vw,5.5rem);
+    font-size:clamp(2rem,6vw,3.8rem);
     letter-spacing:0.04em; line-height:0.9;
     color:#fff;
   }
   .hero h1 span { color:var(--gold); display:block; }
   .tagline {
-    margin-top:0.6rem;
+    margin-top:0.3rem;
     font-size:clamp(0.85rem,2.5vw,1rem);
     color:#999; line-height:1.5;
   }
   .tagline strong { color:var(--gold); font-weight:600; }
+
+
+  /* Two column layout */
+  .two-col {
+    display:flex; gap:2rem; align-items:flex-start; width:100%; max-width:860px;
+  }
+  .col-qr {
+    display:flex; flex-direction:column; align-items:center;
+    gap:0.75rem; flex-shrink:0; width:240px;
+  }
+  .col-rules {
+    flex:1; display:flex; flex-direction:column; gap:1rem;
+  }
+  @media (max-width: 640px) {
+    .two-col { flex-direction:column; align-items:center; }
+    .col-qr { width:100%; }
+  }
 
   /* Prize badge */
   .prize {
     display:flex; align-items:center; gap:0.75rem;
     background:rgba(255,215,0,0.07);
     border:1px solid var(--border);
-    border-radius:14px; padding:0.9rem 1.4rem;
+    border-radius:10px; padding:0.55rem 1.2rem;
     width:100%;
   }
-  .prize-icon { font-size:1.8rem; flex-shrink:0; }
+  .prize-icon { font-size:1.4rem; flex-shrink:0; }
   .prize-label { font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:0.2rem; }
-  .prize-value { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:0.05em; color:#fff; line-height:1; }
+  .prize-value { font-family:'Bebas Neue',sans-serif; font-size:1.2rem; letter-spacing:0.05em; color:#fff; line-height:1; }
   .prize-sub { font-size:0.75rem; color:#777; margin-top:0.2rem; }
 
   /* QR section */
@@ -81,7 +98,7 @@
     padding:14px; display:inline-block;
     box-shadow:0 0 60px rgba(255,215,0,0.12);
   }
-  .qr-wrap img { display:block; width:200px; height:200px; }
+  .qr-wrap img { display:block; width:220px; height:220px; }
   .qr-label {
     font-size:0.78rem; color:#666; text-align:center; letter-spacing:0.06em;
     text-transform:uppercase;
@@ -164,40 +181,44 @@
     </div>
   </div>
 
-  <div class="qr-section">
-    <div class="qr-wrap">
-      <img src="data:image/png;base64,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" alt="Scan to sign up for Flag Wave">
-    </div>
-    <div>
+    <div class="two-col">
+
+    <div class="col-qr">
+      <div class="qr-wrap">
+        <img src="data:image/png;base64,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ASW3T0/dEX3zeZ16fZLXeaKJm7dv3jGeuIvryxIAxBIAxBIAxBIAxBIAxBIAxBIAxBIAxBIAEEsAEEsAeEDdNuw32vZj2/Y237yv27b/eapT3wv3/bz77ssSAMQSAMQSAMQSAMQSAMQSABBLABBLABBLABBLABBLACh2J3+sbVdw11Zk2z5q8pjbNniT9yJ5zKdu+Sav88T/Lbvewbb7PnFj1pclAIglAIglAIglAIglAIglAIglAIglAIglACCWACCWAPCAu+2AJm4qtm0zTtwRnXgvkr916tboqVu+be/pqffUlyUAiCUAiCUAiCUAiCUAIJYAIJYAIJYAIJYAIJYAIJYAMNy11or92MRNxaSJG7On7kAmr8+u57ntmT91e/nU5/DU/1G+LAFALAFALAFALAFALAFALAEAsQQAsQQAsQQAsQQAsQSAYnfyx3btCib3NpPbg23XOXl9khuhE+9p23kl36+J+7Fv3sU9dbvblyUAiCUAiCUAiCUAiCUAiCUAiCUAiCUAiCUAIJYAIJYA8IBrrXXkiSW3NG08nnff27ZYJ275tmnbTG77rYl/x5clAIglAIglAIglAIglACCWACCWACCWACCWACCWACCWADDc3XZAuzYD27YZk3ad+5t3IJPPavIZa3u/Jr47jseXJQAglgAglgAglgAglgAglgAglgAglgAglgCAWAKAWALAJtdaa9xBJzdLd0lue+46nuT1SR7zm/ctT31Pk/fU8bzzHfRlCQBiCQBiCQBiCQBiCQBiCQBiCQBiCQBiCQCIJQCIJQA84E7+2K7NwF27gsldyjdvliZ3cdvuafIatl2ftmvYdl4T3/eJ98uXJQCIJQCIJQCIJQCIJQCIJQAglgAglgAglgAglgAglgBQLLoN27aF2LYRuuvvtG3ntt2LibuvyWe+7X/CN8fctlna9lvJndW298uXJQCIJQCIJQCIJQCIJQCIJQAglgAglgAglgAglgAglgBQ7FprVR3QxO3KXefV9lsTd1Z33dPk/WozcRe37ZiTO88T/7e0/ZYvSwAQSwAQSwAQSwAQSwAQSwAQSwAQSwBALAFALAFALAHgh9zJH2vbFZx4Xqcec9sG5sTN213n1XbuyZ3V5Lvzzd/Zde5tz+rE/5m+LAFALAFALAFALAFALAFALAFALAFALAFALAEAsQQAsQSAB1xrLVehRHIDc+I2Y/Ia7pK8hhO3l9uuT/L9evPz48sSAMQSAMQSABBLABBLABBLABBLABBLABBLABBLABBLAODz+Xw+d/LH2nY7kyZuYJ56v9r2USduuiaf1eS7c+oecvL5OXU/1pclAIglAIglAIglAIglAIglAIglAIglAIglACCWACCWAPCAu+2ATt1mTJ77rv3GN2+Weubx/Jzx/9CXJQCIJQCIJQCIJQCIJQCIJQAglgAglgAglgAglgAglgBQ7FprxX4suVm6S9uG6q7r3HbuE5+NiSY+h6deZ8/qrOfZlyUAiCUAiCUAiCUAiCUAiCUAiCUAiCUAiCUAIJYAIJYA8IDbJeiR3HTdZeJ+bNv9St6LtvNqu+8T91qTz/yuazhxO9eXJQCIJQCIJQCIJQCIJQCIJQCIJQCIJQCIJQAglgAglgDwANuwwyQ3Fd+8szrxGiafsbZr2PZbyee5bTO57Tn0ZQkAYgkAYgkAYgkAYgkAYgkAiCUAiCUAiCUAiCUAiCUAFBu5DTtx53DXeU3cLE2eV3KTs+05bDv3tutz6vEk353kfW/bvPVlCQBiCQBiCQBiCQBiCQBiCQBiCQBiCQBiCQCIJQCIJQA8oG4bNrlvOZGd1fOeseTeb9ve5q7rY4d21v+EidvCviwBQCwBQCwBQCwBQCwBQCwBQCwBQCwBQCwBALEEALEEgAdcay1XAQB8WQKAWAKAWAKAWAKAWAKAWAKAWAKAWAIAYgkAYgkAYgkAYgkAYgkAYgkAYgkAYgkAiCUAiCUAiCUAiCUAiCUAiCUAiCUAiCUAiCUAIJYAIJYAIJYAIJYAIJYAIJYAIJYAIJYAgFgCgFgCwG7/Ai2RgX5ft+poAAAAAElFTkSuQmCC" alt="Scan to sign up for Flag Wave">
+      </div>
       <div class="qr-label">Scan to sign up</div>
-      <div class="qr-url">momentum-people.github.io/flagwave/flagwave-signup.html</div>
+      <div class="qr-url">momentum-people.github.io/flagwave/<br>flagwave-signup.html</div>
     </div>
-  </div>
 
-  <div class="rules-card">
-    <div class="rules-title">How it works</div>
-    <div class="rules-list">
-      <div class="rule">
-        <div class="rule-num">1</div>
-        <div class="rule-text"><strong>Sign up</strong> — scan the QR code and enter your name and email. You'll be assigned to a zone.</div>
+    <div class="col-rules">
+      <div class="rules-card">
+        <div class="rules-title">How it works</div>
+        <div class="rules-list">
+          <div class="rule">
+            <div class="rule-num">1</div>
+            <div class="rule-text"><strong>Sign up</strong> — scan the QR code and enter your name and email. You'll be assigned to a zone.</div>
+          </div>
+          <div class="rule">
+            <div class="rule-num">2</div>
+            <div class="rule-text"><strong>Find your zone</strong> — head to your assigned area before <strong>5:50 PM</strong> and check in with your Zone Captain.</div>
+          </div>
+          <div class="rule">
+            <div class="rule-num">3</div>
+            <div class="rule-text"><strong>Wave your flag</strong> — at <strong>6:00 PM</strong> a drone flies overhead capturing all flags waving simultaneously.</div>
+          </div>
+          <div class="rule">
+            <div class="rule-num">4</div>
+            <div class="rule-text"><strong>Watch the draw</strong> — stay after the shot. The winner is drawn live on the big screen right after the drone lands.</div>
+          </div>
+        </div>
       </div>
-      <div class="rule">
-        <div class="rule-num">2</div>
-        <div class="rule-text"><strong>Find your zone</strong> — head to your assigned area before <strong>5:50 PM</strong> and check in with your Zone Captain.</div>
-      </div>
-      <div class="rule">
-        <div class="rule-num">3</div>
-        <div class="rule-text"><strong>Wave your flag</strong> — at <strong>6:00 PM</strong> a drone flies overhead capturing all flags waving simultaneously.</div>
-      </div>
-      <div class="rule">
-        <div class="rule-num">4</div>
-        <div class="rule-text"><strong>Watch the draw</strong> — stay after the shot. The winner is drawn live on the big screen right after the drone lands.</div>
+
+      <div class="bearer-note">
+        ⭐ <strong>Want 3× raffle entries?</strong> Get to your zone early — the first 8 people to check in per zone become official <strong>Flag Bearers</strong> and earn triple entries.
       </div>
     </div>
-  </div>
 
-  <div class="bearer-note">
-    ⭐ <strong>Want 3× raffle entries?</strong> Get to your zone early — the first 8 people to check in per zone become official <strong>Flag Bearers</strong> and earn triple entries.
   </div>
 
   <div class="footer">Launch North Attleboro &nbsp;·&nbsp; World Cup Kickoff Party &nbsp;·&nbsp; June 12, 2026</div>
