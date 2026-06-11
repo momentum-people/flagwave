@@ -8,7 +8,7 @@
 <style>
   :root { --red:#E8192C; --gold:#FFD700; --dark:#060609; --border:rgba(255,255,255,0.08); --text:#f0f0f0; --muted:#555; }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--dark); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  body { background:var(--dark); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; overflow-y:auto; display:flex; flex-direction:column; align-items:center; justify-content:center; }
 
   .stars { position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
   .star { position:absolute; width:2px; height:2px; background:white; border-radius:50%; animation:twinkle var(--d) ease-in-out infinite; }
@@ -19,17 +19,17 @@
   @keyframes b1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(130px,90px)} }
   @keyframes b2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-90px,-70px)} }
 
-  .main { position:relative; z-index:1; width:100%; max-width:1100px; padding:1.5rem; display:flex; flex-direction:column; align-items:center; gap:1.5rem; }
+  .main { position:relative; z-index:1; width:100%; max-width:1100px; padding:0.75rem 1.5rem; display:flex; flex-direction:column; align-items:center; gap:0.75rem; }
 
-  .header { text-align:center; }
+  .header { text-align:center; padding:0.25rem 0; }
   .eyebrow { font-size:0.75rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--red); margin-bottom:0.35rem; }
-  .header h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.2rem,5.5vw,5rem); letter-spacing:0.05em; line-height:0.88; }
+  .header h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(1.6rem,3.5vw,3rem); letter-spacing:0.05em; line-height:0.88; }
   .header h1 span { color:var(--gold); }
-  .prize-text { margin-top:0.5rem; font-size:clamp(0.8rem,1.6vw,1rem); color:#888; }
+  .prize-text { margin-top:0.2rem; font-size:clamp(0.7rem,1.2vw,0.85rem); color:#888; }
 
   .slot-machine {
     display:flex; align-items:stretch; width:100%; max-width:920px;
-    min-height:250px;
+    min-height:200px;
     background:#04040d;
     border:2px solid rgba(255,215,0,0.25);
     border-radius:18px;
@@ -40,7 +40,7 @@
   .reel-col {
     flex:1; display:flex; flex-direction:column;
     border-right:1px solid rgba(255,255,255,0.05);
-    position:relative; min-height:250px;
+    position:relative; min-height:200px;
   }
   .reel-col:last-child { border-right:none; }
 
@@ -54,17 +54,17 @@
   }
   .reel-col.locked .reel-header { color:var(--gold); }
 
-  .reel-window { position:relative; overflow:hidden; height:174px; min-height:174px; flex-shrink:0; }
+  .reel-window { position:relative; overflow:hidden; height:140px; min-height:140px; flex-shrink:0; }
 
   .reel-window::before,
   .reel-window::after {
     content:''; position:absolute; left:0; right:0; z-index:4; pointer-events:none;
   }
-  .reel-window::before { top:0; height:52px; background:linear-gradient(to bottom,#04040d 30%,transparent); }
-  .reel-window::after  { bottom:0; height:52px; background:linear-gradient(to top,#04040d 30%,transparent); }
+  .reel-window::before { top:0; height:42px; background:linear-gradient(to bottom,#04040d 30%,transparent); }
+  .reel-window::after  { bottom:0; height:42px; background:linear-gradient(to top,#04040d 30%,transparent); }
 
   .center-line {
-    position:absolute; top:50%; left:0; right:0; height:58px;
+    position:absolute; top:50%; left:0; right:0; height:46px;
     transform:translateY(-50%);
     border-top:1px solid rgba(255,215,0,0.12);
     border-bottom:1px solid rgba(255,215,0,0.12);
@@ -80,7 +80,7 @@
   .reel-strip { position:absolute; top:0; left:0; width:100%; will-change:transform; }
 
   .reel-item {
-    height:58px;
+    height:46px;
     display:flex; align-items:center; justify-content:center;
     font-family:'Bebas Neue',sans-serif;
     font-size:clamp(0.95rem,2.2vw,1.55rem);
@@ -116,7 +116,7 @@
 
   .winner-banner {
     width:100%; max-width:920px;
-    text-align:center; padding:1.4rem 1.5rem;
+    text-align:center; padding:0.7rem 1.5rem;
     background:rgba(255,215,0,0.05);
     border:1px solid rgba(255,215,0,0.18);
     border-radius:14px;
@@ -126,18 +126,18 @@
   }
   .winner-banner.show { opacity:1; transform:translateY(0); pointer-events:auto; }
   .winner-banner .wlabel { font-size:0.68rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); margin-bottom:0.35rem; }
-  .winner-banner .wname { font-family:'Bebas Neue',sans-serif; font-size:clamp(1.8rem,4.5vw,3.8rem); letter-spacing:0.05em; color:var(--gold); animation:glow 0.9s ease-in-out infinite alternate; }
+  .winner-banner .wname { font-family:'Bebas Neue',sans-serif; font-size:clamp(1.4rem,3vw,2.6rem); letter-spacing:0.05em; color:var(--gold); animation:glow 0.9s ease-in-out infinite alternate; }
   @keyframes glow { from{text-shadow:0 0 18px rgba(255,215,0,0.35)} to{text-shadow:0 0 55px rgba(255,215,0,0.85),0 0 90px rgba(255,165,0,0.35)} }
   .winner-banner .wzone { font-size:0.88rem; color:#999; margin-top:0.25rem; }
   .bearer-tag { display:inline-block; background:rgba(255,215,0,0.12); border:1px solid rgba(255,215,0,0.28); border-radius:20px; font-size:0.7rem; color:var(--gold); padding:0.18rem 0.65rem; margin-top:0.45rem; }
 
   .status-msg { font-size:0.72rem; color:var(--muted); text-align:center; min-height:1.1em; letter-spacing:0.06em; }
 
-  .controls { display:flex; gap:0.9rem; align-items:center; flex-wrap:wrap; justify-content:center; }
+  .controls { display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; justify-content:center; }
   .btn-spin {
     background:var(--red); color:white; border:none; border-radius:12px;
-    font-family:'Bebas Neue',sans-serif; font-size:clamp(1.4rem,2.8vw,2rem);
-    letter-spacing:0.1em; padding:0.65rem 3.2rem; cursor:pointer;
+    font-family:'Bebas Neue',sans-serif; font-size:clamp(1.1rem,2vw,1.6rem);
+    letter-spacing:0.1em; padding:0.5rem 2.4rem; cursor:pointer;
     box-shadow:0 6px 28px rgba(232,25,44,0.38);
     transition:transform 0.15s, background 0.2s, box-shadow 0.2s;
   }
@@ -153,12 +153,12 @@
 
   /* ── PARTICIPANTS PANEL ── */
   .panel { width:100%; max-width:920px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
-  .panel-hdr { padding:0.8rem 1.4rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; }
+  .panel-hdr { padding:0.5rem 1.2rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; }
   .panel-hdr h3 { font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#666; }
   .entry-counts { display:flex; gap:1rem; font-size:0.7rem; color:#666; }
   .entry-counts strong { color:var(--gold); }
 
-  .panel-body { padding:0.9rem 1.4rem; display:flex; flex-direction:column; gap:0.75rem; }
+  .panel-body { padding:0.6rem 1.2rem; display:flex; flex-direction:column; gap:0.5rem; }
 
   /* Load row */
   .load-row { display:flex; gap:0.75rem; align-items:center; }
@@ -305,7 +305,7 @@ function kachunk(){var ac=getAC(),t=ac.createOscillator(),tg=ac.createGain();t.t
 function sirenFanfare(){var ac=getAC(),crowd=mkNoise(ac,2.5),cg=ac.createGain();crowd.connect(cg);cg.connect(ac.destination);cg.gain.setValueAtTime(0,ac.currentTime);cg.gain.linearRampToValueAtTime(0.35,ac.currentTime+0.4);cg.gain.setValueAtTime(0.3,ac.currentTime+1.8);cg.gain.linearRampToValueAtTime(0,ac.currentTime+2.5);crowd.start();crowd.stop(ac.currentTime+2.6);[0,0.1].forEach(function(off,idx){var s=ac.createOscillator(),slp=ac.createBiquadFilter(),sg=ac.createGain();s.type='sawtooth';slp.type='lowpass';slp.frequency.value=1400;s.connect(slp);slp.connect(sg);sg.connect(ac.destination);s.frequency.setValueAtTime(180+idx*40,ac.currentTime+off);s.frequency.linearRampToValueAtTime(1100+idx*300,ac.currentTime+off+1.4);sg.gain.setValueAtTime(0,ac.currentTime+off);sg.gain.linearRampToValueAtTime(0.25,ac.currentTime+off+0.15);sg.gain.setValueAtTime(0.22,ac.currentTime+off+1.2);sg.gain.linearRampToValueAtTime(0,ac.currentTime+off+2.0);s.start(ac.currentTime+off);s.stop(ac.currentTime+off+2.1);});}
 
 // ── DATA ───────────────────────────────────────────────────────────
-var IH=58, WH=174, PEAK=1.5, ACC=800, DEC=2500;
+var IH=46, WH=140, PEAK=1.5, ACC=800, DEC=2500;
 var LT=[8000,13000,16500]; // lock times ms: zone=8s, first=13s, last=16.5s
 var ZONE_DESCS={'Zone 1':'Trampoline Courts','Zone 2':'Arcade','Zone 3':'Main Entrance / Lobby','Zone 4':'Lucky Putt / Bowling','Zone 5':'Krave Cafe','Zone 6':'Bar Hops'};
 var participants=[], pool=[], winner=null, spinning=false;
