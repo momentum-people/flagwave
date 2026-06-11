@@ -475,16 +475,22 @@ function startSpin(){
   var maxTravel=PEAK*(ACC/3)+PEAK*(LT[2]-ACC-DEC)+PEAK*(DEC/4);
   var need=Math.ceil(maxTravel/IH)+30;
 
+  // Store per-reel landing indexes so lockReel can read winner from strip
+  var landingIdxs=[0,0,0];
+
   [makeLong(zones,need),makeLong(firsts,need),makeLong(lasts,need)].forEach(function(items,i){
     var totalDist=PEAK*(ACC/3)+PEAK*(LT[i]-ACC-DEC)+PEAK*(DEC/4);
-    var landingIdx=Math.ceil(totalDist/IH)+5;
-    while(items.length<=landingIdx+5)items=items.concat(shuffle(items.slice(0,20)));
-    var cur=items.indexOf(targets[i]);
-    if(cur>=0){var tmp=items[landingIdx];items[landingIdx]=items[cur];items[cur]=tmp;}
-    else{items[landingIdx]=targets[i];}
+    // landingIdx: where the reel will naturally stop based on physics distance
+    var landingIdx=Math.round(totalDist/IH);
+    // Ensure we have enough items
+    while(items.length<=landingIdx+10)items=items.concat(shuffle(items.slice(0,20)));
+    // Force winner value directly into the landing slot — no indexOf swap
+    items[landingIdx]=targets[i];
+    landingIdxs[i]=landingIdx;
     fillStrip(i,items);
-    var targetPos=landingIdx*IH-WH/2+IH/2;
-    setPos(i,targetPos-totalDist);
+    // Start position: landingIdx slot should end up centered after totalDist travel
+    var startPos=landingIdx*IH-WH/2+IH/2-totalDist;
+    setPos(i,startPos);
     document.getElementById('col'+i).classList.remove('locked','just-locked');
     document.getElementById('foot'+i).style.opacity='0';
     document.getElementById('foot'+i).style.transform='scale(0.8)';
@@ -506,9 +512,17 @@ function startSpin(){
       setPos(i,pos[i]);
       if(el>=dur&&!locked[i]){
         locked[i]=true;
-        var ci=Math.round((pos[i]+WH/2-IH/2)/IH);
-        ci=Math.max(0,Math.min(ci,strips[i].length-1));
+        // Snap exactly to the pre-calculated landing index — no rounding drift
+        var ci=landingIdxs[i];
         setPos(i,ci*IH-WH/2+IH/2);
+        // Read the actual displayed name from the strip as the canonical winner value
+        var stripEl=document.getElementById('strip'+i);
+        if(stripEl.children[ci]){
+          var displayedVal=stripEl.children[ci].textContent;
+          if(i===0) winner.zone=displayedVal;
+          if(i===1) winner.first=displayedVal;
+          if(i===2) winner.last=displayedVal;
+        }
         var col=document.getElementById('col'+i);
         col.classList.add('locked','just-locked');
         setTimeout((function(ii){return function(){document.getElementById('col'+ii).classList.remove('just-locked');};})(i),500);
